@@ -4,23 +4,31 @@ from getpass import getpass
 
 # https://www.pygit2.org/recipes/git-clone-ssh.html
 class RemoteCallbacks(pygit2.RemoteCallbacks):
+    def __init__(self, passphrase=None):
+        self.passphrase = passphrase
+    
     def credentials(self, url, username_from_url, allowed_types):
         if allowed_types & pygit2.credentials.GIT_CREDENTIAL_USERNAME:
             return pygit2.Username('git')
         elif allowed_types & pygit2.credentials.GIT_CREDENTIAL_SSH_KEY:
-            passphrase = getpass('passphrase: ')
-            return pygit2.Keypair('git', os.path.expanduser('~/.ssh/id_rsa.pub'), os.path.expanduser('~/.ssh/id_rsa'), passphrase)
+            if self.passphrase is None:
+                self.passphrase = getpass('passphrase: ')
+            return pygit2.Keypair('git', os.path.expanduser('~/.ssh/id_rsa.pub'), os.path.expanduser('~/.ssh/id_rsa'), self.passphrase)
         else:
             return None
         
 
 # https://github.com/MichaelBoselowitz/pygit2-examples
-def pull(repo, remote_name='origin'):
+def pull(repo, remote_name='origin', callbacks=None):
     for remote in repo.remotes:
         if remote.name == remote_name:
-            remote.fetch(callbacks=RemoteCallbacks())
+            if callbacks is None:
+                callbacks=RemoteCallbacks()
+            
+            remote.fetch(callbacks=callbacks)
             remote_master_id = repo.lookup_reference('refs/remotes/origin/master').target
             merge_result, _ = repo.merge_analysis(remote_master_id)
+            
             # Up to date, do nothing
             if merge_result & pygit2.GIT_MERGE_ANALYSIS_UP_TO_DATE:
                 return
