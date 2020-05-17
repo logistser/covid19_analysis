@@ -1,5 +1,5 @@
 # Анализ распространения  COVID-19
 
-Источник данных: https://github.com/owid/covid-19-data.
+Источники данных: 1) https://github.com/owid/covid-19-data, 2) https://github.com/CSSEGISandData/COVID-19.
 
 Для выполнения кода нужно ввести passphrase для подключения по ssh (либо закомментировать блок кода для обновления данных, если обновление не требуется).
