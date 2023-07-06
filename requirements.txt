@@ -1,6 +1,6 @@
 pandas==1.0.1
 numpy==1.18.1
-scipy==1.4.1
+scipy==1.10.0
 pygit2==1.2.1
 plotly==4.7.1
 matplotlib
